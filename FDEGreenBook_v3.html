@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FDE 绿皮书 · AI 落地通关之旅 v2</title>
+<style>
+  :root{
+    --green-deep:#1b3a2f; --green:#2e5d45; --green-soft:#4a7c59;
+    --cream:#f4ead5; --cream-2:#ece0c2; --ink:#1c1c1c;
+    --accent:#c8762f; --accent-2:#b85c2c; --paper:#f6f0df;
+    --road:#3a3a3a; --ok:#2e7d32; --warn:#c8762f; --bad:#a33a2a;
+    --line:rgba(28,28,28,.15);
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:"PingFang SC","Helvetica Neue",Helvetica,Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+
+  header{position:sticky;top:0;z-index:50;background:var(--green-deep);color:var(--cream);border-bottom:3px solid var(--accent);box-shadow:0 2px 12px rgba(0,0,0,.2)}
+  .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;flex-wrap:wrap;gap:10px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand-logo{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px;border:2px solid var(--cream)}
+  .brand-title{font-size:18px;font-weight:700;letter-spacing:.5px}
+  .brand-sub{font-size:11px;opacity:.7;letter-spacing:2px}
+  .nav-links{display:flex;gap:6px;flex-wrap:wrap}
+  .nav-links button{background:transparent;color:var(--cream);border:1px solid rgba(244,234,213,.3);padding:7px 14px;border-radius:20px;font-size:13px;cursor:pointer;transition:.2s;font-family:inherit}
+  .nav-links button:hover{background:var(--accent);border-color:var(--accent)}
+  .nav-links button.active{background:var(--accent);border-color:var(--accent);font-weight:600}
+
+  main{max-width:1100px;margin:0 auto;padding:30px 20px 80px}
+  .section{display:none;animation:fade .4s ease}
+  .section.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* 封面 */
+  .cover{background:linear-gradient(135deg,var(--green-deep) 0%,var(--green) 100%);color:var(--cream);border-radius:18px;padding:50px 40px;position:relative;overflow:hidden;border:1px solid rgba(244,234,213,.15)}
+  .cover::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(244,234,213,.04) 0 2px,transparent 2px 14px);pointer-events:none}
+  .cover-stamp{position:absolute;top:24px;right:24px;width:90px;height:90px;border-radius:50%;border:2px dashed var(--accent);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800;font-size:12px;text-align:center;transform:rotate(-12deg);line-height:1.2}
+  .cover h1{font-size:42px;margin:0 0 8px;letter-spacing:2px;font-weight:800}
+  .cover .tagline{font-size:16px;opacity:.85;margin-bottom:30px;max-width:640px}
+  .cover-meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:20px}
+  .meta-chip{background:rgba(244,234,213,.1);border:1px solid rgba(244,234,213,.25);padding:6px 14px;border-radius:20px;font-size:12px}
+  .cover-cta{display:inline-block;margin-top:26px;background:var(--accent);color:#fff;padding:14px 30px;border-radius:30px;font-weight:700;font-size:15px;cursor:pointer;border:none;font-family:inherit;letter-spacing:1px;box-shadow:0 4px 14px rgba(200,118,47,.4);transition:.2s}
+  .cover-cta:hover{background:var(--accent-2);transform:translateY(-2px)}
+
+  .module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:30px}
+  .module-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px;cursor:pointer;transition:.25s;position:relative;overflow:hidden}
+  .module-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,.08);border-color:var(--green-soft)}
+  .module-card .num{position:absolute;top:-10px;right:14px;font-size:70px;font-weight:800;color:rgba(46,93,69,.08);line-height:1}
+  .module-card h3{margin:0 0 8px;color:var(--green-deep);font-size:18px}
+  .module-card .icon{font-size:26px;margin-bottom:8px}
+  .module-card p{margin:0;font-size:13px;color:#555}
+
+  /* 通用 */
+  .page-title{display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--green-deep);padding-bottom:14px;margin-bottom:24px}
+  .page-title .badge{background:var(--green-deep);color:var(--cream);padding:4px 12px;border-radius:4px;font-size:12px;font-weight:700;letter-spacing:2px}
+  .page-title h2{margin:0;font-size:26px;color:var(--green-deep)}
+
+  /* 教程 */
+  .level-block{margin:30px 0 18px}
+  .level-block .lv-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .level-block .lv-tag{background:var(--accent);color:#fff;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:700;letter-spacing:2px}
+  .level-block h3{margin:0;color:var(--green-deep);font-size:20px}
+  .lesson{background:var(--paper);border-left:5px solid var(--green-soft);border-radius:8px;padding:22px 26px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+  .lesson h4{margin:0 0 10px;color:var(--green-deep);font-size:17px;display:flex;align-items:center;gap:8px}
+  .lesson h4 .ico{background:var(--green);color:var(--cream);width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+  .lesson p{margin:8px 0;color:#333}
+  .lesson ul{margin:8px 0;padding-left:22px}
+  .lesson li{margin:6px 0}
+  .quote{background:var(--cream-2);border-left:3px solid var(--accent);padding:12px 16px;margin:12px 0;font-style:italic;color:#444;font-size:14px;border-radius:4px}
+  .quote .src{display:block;margin-top:6px;font-size:12px;color:#777;font-style:normal}
+  .tag{display:inline-block;background:var(--green-soft);color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;margin:2px 4px 2px 0}
+  .tag.orange{background:var(--accent)}
+  .tag.gray{background:#888}
+
+  /* 对比表 */
+  .cmp-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;background:#fff;border-radius:8px;overflow:hidden}
+  .cmp-table th,.cmp-table td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+  .cmp-table th{background:var(--green-deep);color:var(--cream);font-weight:600}
+  .cmp-table tr:nth-child(even) td{background:#fafaf2}
+  .cmp-table .hl{color:var(--accent-2);font-weight:600}
+
+  /* 决策树/自检 */
+  .checklist{background:#fff;border:1px dashed var(--green-soft);border-radius:8px;padding:14px 18px;margin:12px 0}
+  .checklist h5{margin:0 0 8px;color:var(--green-deep);font-size:14px}
+  .checklist ul{margin:0;padding-left:20px}
+  .checklist li{margin:5px 0;font-size:13px}
+  .checklist li::marker{color:var(--accent)}
+  .warn-box{background:#fbeae7;border-left:4px solid var(--bad);padding:12px 16px;margin:12px 0;border-radius:6px;font-size:13px;color:#7a2a1d}
+  .ok-box{background:#eaf5ea;border-left:4px solid var(--ok);padding:12px 16px;margin:12px 0;border-radius:6px;font-size:13px;color:#1b4622}
+
+  /* 案例库 */
+  .case-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .case-filter button{background:var(--paper);border:1px solid var(--line);color:#555;padding:6px 14px;border-radius:16px;font-size:12px;cursor:pointer;font-family:inherit;transition:.18s}
+  .case-filter button:hover{border-color:var(--green-soft)}
+  .case-filter button.active{background:var(--green-deep);color:var(--cream);border-color:var(--green-deep)}
+  .case-item{background:var(--paper);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;transition:.2s}
+  .case-item:hover{border-color:var(--green-soft)}
+  .case-head{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;user-select:none}
+  .case-head .case-ico{font-size:26px;flex-shrink:0}
+  .case-head .case-title{flex:1}
+  .case-head .case-title h4{margin:0;font-size:16px;color:var(--green-deep)}
+  .case-head .case-title .case-tags{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+  .case-head .case-tags span{font-size:11px;background:var(--cream-2);color:#555;padding:2px 8px;border-radius:8px}
+  .case-head .case-tags .ind{background:var(--green-soft);color:#fff}
+  .case-head .case-tags .diff-hard{background:var(--bad);color:#fff}
+  .case-head .case-tags .diff-mid{background:var(--accent);color:#fff}
+  .case-head .toggle{font-size:14px;color:var(--green-soft);transition:transform .2s}
+  .case-item.open .toggle{transform:rotate(90deg)}
+  .case-body{display:none;padding:0 20px 20px;animation:fade .3s}
+  .case-item.open .case-body{display:block}
+  .case-sec{margin:14px 0;padding:14px 16px;border-radius:8px;font-size:13px}
+  .case-sec.bg{background:var(--cream-2);border-left:3px solid var(--road)}
+  .case-sec.pit{background:#fbeae7;border-left:4px solid var(--bad)}
+  .case-sec.pit b{color:var(--bad)}
+  .case-sec.diag{background:#fdf3e7;border-left:4px solid var(--warn)}
+  .case-sec.diag b{color:var(--accent-2)}
+  .case-sec.sol{background:#eaf5ea;border-left:4px solid var(--ok)}
+  .case-sec.sol b{color:var(--ok)}
+  .case-sec.res{background:#eef4ee;border-left:4px solid var(--green-soft)}
+  .case-sec h5{margin:0 0 8px;font-size:13px;display:flex;align-items:center;gap:6px}
+  .case-sec ol{margin:8px 0 0;padding-left:20px}
+  .case-sec ol li{margin:5px 0}
+  .case-sec .step{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+  .case-sec .step .n{background:var(--green-deep);color:var(--cream);width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+  .case-sec .step .txt{flex:1;font-size:13px}
+  .case-sec .step .txt b{color:var(--green-deep)}
+
+  /* 游戏 */
+  .game-status{display:flex;gap:14px;flex-wrap:wrap;align-items:center;background:var(--green-deep);color:var(--cream);padding:14px 20px;border-radius:10px;margin-bottom:16px}
+  .stat{display:flex;align-items:center;gap:8px;font-size:14px}
+  .stat .label{opacity:.7;font-size:11px;letter-spacing:1px}
+  .stat .val{font-weight:700;color:var(--accent);font-size:16px}
+  .trust-meter{flex:1;min-width:200px}
+  .trust-meter .t-label{font-size:11px;opacity:.7;margin-bottom:4px;letter-spacing:1px}
+  .trust-bar{height:14px;background:rgba(244,234,213,.15);border-radius:7px;overflow:hidden;display:flex}
+  .trust-bar .trust-fill{height:100%;background:linear-gradient(90deg,var(--bad),var(--warn),var(--ok));transition:.5s;width:70%}
+  .trust-bar .trust-marker{width:2px;height:100%;background:var(--cream);opacity:.6;position:relative}
+
+  .stage{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:16px}
+  .stage-head{background:linear-gradient(90deg,var(--green) 0%,var(--green-soft) 100%);color:var(--cream);padding:18px 24px}
+  .stage-head .stage-no{font-size:12px;letter-spacing:3px;opacity:.7}
+  .stage-head h3{margin:4px 0 0;font-size:20px}
+  .stage-head .stage-loc{font-size:12px;margin-top:4px;opacity:.85}
+  .stage-body{padding:24px}
+  .scene{background:var(--cream-2);padding:14px 16px;border-radius:8px;border-left:4px solid var(--road);margin-bottom:14px;font-size:14px;color:#333}
+  .scene + .scene{margin-top:-8px}
+  .scene .who{font-weight:700;color:var(--green-deep);margin-right:6px}
+  .stage-meta{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 14px;font-size:12px;color:#666}
+  .stage-meta span b{color:var(--green-deep)}
+  .options{display:grid;gap:10px}
+  .option{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px;cursor:pointer;transition:.18s;display:flex;gap:12px;align-items:flex-start}
+  .option:hover{border-color:var(--green-soft);background:#fafaf2}
+  .option .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--green-soft);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--green-deep);font-weight:700}
+  .option.selected{border-color:var(--accent);background:#fff8ec}
+  .option.selected .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+  .option.locked{cursor:default;opacity:.85}
+  .option.correct .dot{background:var(--ok);border-color:var(--ok);color:#fff}
+  .option.wrong .dot{background:var(--bad);border-color:var(--bad);color:#fff}
+  .option .cost{font-size:11px;color:#888;margin-top:4px}
+  .feedback{margin-top:14px;padding:14px 16px;border-radius:8px;font-size:13px;display:none;border-left:4px solid}
+  .feedback.show{display:block;animation:fade .3s}
+  .feedback.good{background:#eaf5ea;border-color:var(--ok);color:#1b4622}
+  .feedback.mid{background:#fdf3e7;border-color:var(--warn);color:#7a4a17}
+  .feedback.bad{background:#fbeae7;border-color:var(--bad);color:#7a2a1d}
+  .feedback .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;font-size:12px}
+  .feedback .row span{background:rgba(0,0,0,.06);padding:2px 8px;border-radius:10px}
+  .feedback .why{margin-top:8px;font-size:12px;opacity:.85;border-top:1px dashed rgba(0,0,0,.15);padding-top:8px}
+  .next-btn{margin-top:14px;background:var(--green-deep);color:var(--cream);border:none;padding:10px 22px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;display:none}
+  .next-btn.show{display:inline-block}
+  .next-btn:hover{background:var(--green)}
+
+  .game-result{background:linear-gradient(135deg,var(--green-deep),var(--green));color:var(--cream);border-radius:14px;padding:30px;text-align:center;display:none}
+  .game-result.show{display:block;animation:fade .4s}
+  .game-result .rank{font-size:36px;font-weight:800;color:var(--accent);margin:10px 0}
+  .breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:20px;max-width:600px;margin-left:auto;margin-right:auto}
+  .breakdown .bd{background:rgba(244,234,213,.1);padding:12px;border-radius:8px}
+  .breakdown .bd .v{font-size:22px;font-weight:700;color:var(--accent)}
+  .breakdown .bd .l{font-size:11px;opacity:.7;letter-spacing:1px}
+
+  /* 测试 */
+  .quiz-intro{background:var(--paper);border-radius:14px;padding:24px;border:1px solid var(--line);margin-bottom:20px}
+  .quiz-intro h3{margin:0 0 10px;color:var(--green-deep)}
+  .quiz-intro .dims{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .quiz-q{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-bottom:12px}
+  .quiz-q .q-no{font-size:12px;color:var(--green-soft);font-weight:700;letter-spacing:2px}
+  .quiz-q .q-text{font-size:15px;margin:6px 0 12px;color:var(--ink)}
+  .quiz-q .q-scene{background:var(--cream-2);border-left:3px solid var(--road);padding:10px 14px;border-radius:6px;font-size:13px;color:#444;margin-bottom:12px}
+  .likert{display:grid;gap:6px}
+  .likert label{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px 14px;cursor:pointer;transition:.15s;font-size:13px}
+  .likert label:hover{border-color:var(--green-soft);background:#fafaf2}
+  .likert input{display:none}
+  .likert input:checked + span.txt{color:var(--green-deep);font-weight:600}
+  .likert input:checked ~ .radio{background:var(--accent);border-color:var(--accent)}
+  .likert .radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--green-soft);flex-shrink:0;display:inline-block;position:relative}
+  .likert input:checked + .radio::after{content:"";position:absolute;inset:3px;background:#fff;border-radius:50%}
+  .quiz-submit{background:var(--accent);color:#fff;border:none;padding:14px 36px;border-radius:30px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:1px;box-shadow:0 4px 14px rgba(200,118,47,.35)}
+  .quiz-submit:hover{background:var(--accent-2)}
+  .quiz-submit:disabled{background:#bbb;cursor:not-allowed;box-shadow:none}
+
+  .result-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:28px;display:none}
+  .result-card.show{display:block;animation:fade .4s}
+  .result-head{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;margin-bottom:20px}
+  .result-head .avatar{text-align:center}
+  .result-head .avatar .emoji{font-size:50px}
+  .result-head .avatar h3{margin:8px 0 4px;font-size:20px;color:var(--green-deep)}
+  .result-head .avatar .sub{color:#666;font-size:13px}
+  .radar-wrap{display:flex;justify-content:center}
+  .dim-bar{margin:8px 0}
+  .dim-bar .name{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .dim-bar .name b{color:var(--green-deep)}
+  .dim-bar .track{height:10px;background:#e8dfc8;border-radius:5px;overflow:hidden}
+  .dim-bar .track .bar{height:100%;background:linear-gradient(90deg,var(--green),var(--green-soft));transition:.6s}
+  .advice{background:var(--cream-2);border-left:4px solid var(--accent);padding:14px 16px;margin-top:14px;border-radius:6px;font-size:13px}
+  .advice h4{margin:0 0 8px;color:var(--green-deep)}
+  .advice ul{margin:6px 0 0;padding-left:18px}
+  .advice li{margin:4px 0}
+
+  footer{text-align:center;padding:30px 20px;color:#777;font-size:12px;border-top:1px solid var(--line)}
+  footer a{color:var(--green-deep)}
+
+  @media(max-width:640px){
+    .cover{padding:30px 20px} .cover h1{font-size:30px} .cover-stamp{width:70px;height:70px;font-size:10px}
+    .stage-body{padding:18px} .result-head{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">
+      <div class="brand-logo">FDE</div>
+      <div>
+        <div class="brand-title">FDE 绿皮书 v2</div>
+        <div class="brand-sub">AI 落地通关之旅</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <button class="active" data-go="home">封面</button>
+      <button data-go="tutorial">教程路书</button>
+      <button data-go="cases">案例库</button>
+      <button data-go="game">通关游戏</button>
+      <button data-go="quiz">驾考画像</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 首页 ============ -->
+<section class="section active" id="home">
+  <div class="cover">
+    <div class="cover-stamp">2026<br>通关<br>认证</div>
+    <h1>FDE 绿皮书</h1>
+    <p class="tagline">从 demo 到企业级应用，中间隔着一座桥。FDE 就是修桥的人。<br>这是一份 AI 落地最后一公里的公路旅行手册——15 课分层教程 · 10 关沉浸通关 · 30 题六维画像。</p>
+    <button class="cover-cta" data-go="tutorial">开启旅程 →</button>
+    <div class="cover-meta">
+      <span class="meta-chip">基于真实行业讨论整理</span>
+      <span class="meta-chip">L1-L5 分层教程</span>
+      <span class="meta-chip">8 行业实战案例</span>
+      <span class="meta-chip">10 关 + 信任度机制</span>
+      <span class="meta-chip">30 题 + 雷达图</span>
+    </div>
+  </div>
+  <div class="module-grid">
+    <div class="module-card" data-go="tutorial">
+      <span class="num">01</span><div class="icon">📘</div>
+      <h3>教程路书</h3>
+      <p>L1 基础认知 → L2 能力拆解 → L3 实战方法论 → L4 组织视角 → L5 职业决策，15 课含对比表、反例、自检清单。</p>
+    </div>
+    <div class="module-card" data-go="cases">
+      <span class="num">02</span><div class="icon">📂</div>
+      <h3>实战案例库</h3>
+      <p>8 个行业真实案例（制造/金融/医疗/零售/物流/法律/政府/电商），每个含客户坑、FDE 诊断、分步解决方案与教训。</p>
+    </div>
+    <div class="module-card" data-go="game">
+      <span class="num">03</span><div class="icon">🛣️</div>
+      <h3>通关游戏</h3>
+      <p>10 关覆盖 FDE 全生命周期，加入"客户信任度"资源机制，决策有后果延续，每关反馈分三层：即时/中期/长期。</p>
+    </div>
+    <div class="module-card" data-go="quiz">
+      <span class="num">04</span><div class="icon">🎯</div>
+      <h3>驾考画像</h3>
+      <p>30 题六维能力测试，雷达图可视化，6 档画像分级，每档附详细职业转型路径和对比基准。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 教程 ============ -->
+<section class="section" id="tutorial">
+  <div class="page-title">
+    <span class="badge">PART 01</span>
+    <h2>教程路书 · 五层递进</h2>
+  </div>
+
+  <!-- L1 -->
+  <div class="level-block">
+    <div class="lv-head"><span class="lv-tag">L1 基础认知</span><h3>搞清楚 FDE 到底是什么</h3></div>
+
+    <div class="lesson">
+      <h4><span class="ico">1</span>FDE 的定义与底层逻辑</h4>
+      <p><b>FDE = Forward Deployed Engineer（前线部署工程师）</b>，概念最早来自 Palantir 的同名岗位，Anthropic 也在用。AI 时代"最后一公里"的落地角色。它不新鲜——本质是软件工程组织方式"分久必合合久必分"的又一次循环。但 AI 改变了底层逻辑：</p>
+      <ul>
+        <li><b>过去</b>：标准化产品 + 驻场交付。定制成本高，所以追求标准化。</li>
+        <li><b>现在</b>：AI 让定制成本大幅降低，贴身服务变得有利可图（Palantir 模式）。</li>
+        <li><b>核心矛盾</b>：demo 最容易做，但从 demo 变成企业级应用最难——中间隔着一座桥，FDE 就是修桥的人。</li>
+      </ul>
+      <div class="quote">"做 demo 你不需要考虑一家公司权限系统的历史债和像一堆狗屎一样的历史代码。"<span class="src">—— 现场 FDE 金句</span></div>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">2</span>FDE 的三层含义</h4>
+      <table class="cmp-table">
+        <tr><th>层面</th><th>本质</th><th>典型场景</th></tr>
+        <tr><td class="hl">商业层面</td><td>Palantir 模式，追求极致定制，靠 AI 降低定制成本使其可持续</td><td>不卖标准 SaaS，卖贴身解决方案</td></tr>
+        <tr><td class="hl">AI 项目层面</td><td>AI 项目需求高度不确定，标准化交付无法满足，FDE 连接需求、数据、技术</td><td>72 种业务流程只跑通 1 种的 MVP</td></tr>
+        <tr><td class="hl">研发自身层面</td><td>FDE for IT，服务研发团队自身的 AI 化转型</td><td>给研发团队搭 AI 编程工作流</td></tr>
+      </table>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">3</span>FDE 不是每个项目都需要——判断矩阵</h4>
+      <p>判断标准不是"界面复杂不复杂"，而是<b>场景复杂不复杂 + 是否对结果负责</b>。</p>
+      <table class="cmp-table">
+        <tr><th>场景</th><th>需要 FDE?</th><th>替代方案</th></tr>
+        <tr><td>内部小工具、调 API、做知识库</td><td><span class="tag gray">不需要</span></td><td>后端+前端+产品</td></tr>
+        <tr><td>写提示词、做 RAG 检索</td><td><span class="tag gray">不需要</span></td><td>算法工程师</td></tr>
+        <tr><td>进入生产环境、对结果负责的 B 端</td><td><span class="tag orange">必须</span></td><td>—</td></tr>
+        <tr><td>业务复杂、涉及多系统权限历史债</td><td><span class="tag orange">必须</span></td><td>—</td></tr>
+      </table>
+      <div class="warn-box"><b>反 demo 警告</b>：你有 73 种业务流程，只跑通 1 种就以为 MVP 通了，这叫自欺欺人。企业级 AI 落地的最大不确定性在现场：数据质量不行、权限流程复杂、历史系统不能动、领导下周退休不想动、业务人员说的"自动化"中间夹着大量人工判断、老板要效果、安全要合规、研发怕背锅。</div>
+    </div>
+  </div>
+
+  <!-- L2 -->
+  <div class="level-block">
+    <div class="lv-head"><span class="lv-tag">L2 能力拆解</span><h3>FDE 的四项核心能力 × 场景 × 反例</h3></div>
+
+    <div class="lesson">
+      <h4><span class="ico">4</span>能力一：沟通与需求澄清</h4>
+      <p><b>本质</b>：听懂客户的真实问题，而不是客户说什么就做什么。</p>
+      <table class="cmp-table">
+        <tr><th>典型场景</th><th>新手做法（错）</th><th>FDE 做法（对）</th></tr>
+        <tr><td>客户说"我们要个智能客服"</td><td>问"用什么模型？多少钱？"</td><td>反问：客服现在解决什么问题？现有流程？人工判断在哪？</td></tr>
+        <tr><td>三方（技术/业务/安全）吵架</td><td>站队或等吵完</td><td>把三方真实诉求翻译给彼此听，找共识点</td></tr>
+        <tr><td>需求只有一句话</td><td>按字面意思做一版</td><td>连问 5 个为什么，挖出真实问题</td></tr>
+      </table>
+      <div class="checklist">
+        <h5>🧪 自检：你具备这能力吗？</h5>
+        <ul>
+          <li>客户说"我们要做 AI"，你会先问业务目标，而不是问技术栈？</li>
+          <li>你能用 3 句话把一个技术决策翻译给业务老板听吗？</li>
+          <li>你能用 3 句话把一个业务诉求翻译给研发听吗？</li>
+          <li>会议室里三方吵架时，你是被动等还是主动当翻译？</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">5</span>能力二：产品抽象能力</h4>
+      <p><b>本质</b>：业务层面的抽象，不是代码层面的接口抽象。</p>
+      <div class="quote">"客户说老虎狮子，你第一反应不该是'猫科动物'的代码分类，而是业务场景的产品抽象。"</div>
+      <table class="cmp-table">
+        <tr><th>看到流程图</th><th>程序员思维</th><th>FDE 思维</th></tr>
+        <tr><td>一段业务流程</td><td>哪段代码怎么实现</td><td>流程里哪些是隐性人工判断，AI 替不掉</td></tr>
+        <tr><td>客户提需求</td><td>功能列表 + 接口设计</td><td>这是不是一个产品？能抽象成几类场景？</td></tr>
+        <tr><td>多个客户诉求</td><td>逐个实现</td><td>找共性，做成可复用模块</td></tr>
+      </table>
+      <div class="warn-box"><b>反例</b>："你脑子里全没有你全是代码，你觉得你能转 FDE 吗？"——能力背后全是经验，不是背概念。</div>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">6</span>能力三：方案设计能力</h4>
+      <p><b>本质</b>：把模糊需求拆成架构、模块、接口、数据流、上下文和上线步骤。</p>
+      <ul>
+        <li><b>架构</b>：智能体、知识库、工具调用、人审节点怎么编排</li>
+        <li><b>数据流</b>：实时/离线数据怎么进，结果怎么出，权限怎么过</li>
+        <li><b>上下文设计</b>：哪些是 system prompt，哪些是 few-shot，哪些是 RAG 召回</li>
+        <li><b>上线步骤</b>：灰度策略、回滚机制、监控指标、兜底人工</li>
+      </ul>
+      <div class="checklist">
+        <h5>🧪 一个合格方案文档应包含</h5>
+        <ul>
+          <li>业务目标 + 反例（什么不算成功）</li>
+          <li>架构图 + 数据流图 + 权限边界</li>
+          <li>Corner case 清单 + 兜底机制</li>
+          <li>灰度计划 + 监控指标 + 退出标准</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">7</span>能力四：快速原型能力</h4>
+      <p><b>本质</b>：客户说一个东西，你能快速做出来确认"这是不是你要的"。</p>
+      <p>注意：<b>快速原型 ≠ demo 思维</b>。demo 是只展示正面，原型是用来对齐认知、暴露分歧的工具。</p>
+      <table class="cmp-table">
+        <tr><th></th><th>demo 思维</th><th>原型思维</th></tr>
+        <tr><td>目的</td><td>签单</td><td>对齐认知、暴露分歧</td></tr>
+        <tr><td>展示内容</td><td>只展示能跑通的</td><td>正面 + 负面 + corner case</td></tr>
+        <tr><td>客户反应</td><td>"哇好厉害"</td><td>"哦原来这里不行，那我们要不要干"</td></tr>
+        <tr><td>结局</td><td>上线翻车</td><td>知情决策</td></tr>
+      </table>
+      <div class="quote">"只展示正面的 demo 不是专业的 demo，是为了推进项目而推进项目。"<span class="src">—— demo 阶段 FDE 要做两件事：展示 AI 能做到什么效果（含负面），暴露不就绪场景。</span></div>
+    </div>
+  </div>
+
+  <!-- L3 -->
+  <div class="level-block">
+    <div class="lv-head"><span class="lv-tag">L3 实战方法论</span><h3>FDE 全生命周期怎么干</h3></div>
+
+    <div class="lesson">
+      <h4><span class="ico">8</span>POC 阶段：用真实数据跑 demo</h4>
+      <p><b>核心动作</b>：用客户真实业务样本数据跑 demo——正面展示能力 + 负面暴露 corner case，帮客户做"要不要干"的决策。</p>
+      <div class="warn-box"><b>数据不就绪时要有耐心</b>。案例：工厂需要分钟级传感器数据，但客户只存了秒级（两周）和小时级（按年），缺分钟级。<br><b>错误做法</b>：硬上，用秒级降采样凑。<br><b>FDE 做法</b>：从现在开始收集，一个半月后加上降采样数据凑够两个月再上。</div>
+      <div class="checklist">
+        <h5>🧪 POC 交付物清单</h5>
+        <ul>
+          <li>真实数据跑出的 demo（不是 mock 数据）</li>
+          <li>能力边界报告：哪些能做到、哪些做不到、准确率多少</li>
+          <li>Corner case 清单：失败案例 + 原因分析</li>
+          <li>数据就绪度评估：缺什么、补齐要多久</li>
+          <li>Go/No-Go 建议：基于知情决策</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">9</span>开发阶段：持续理解业务</h4>
+      <p>不是闭门造车，而是不断跟客户碰。通过技术手段完善智能体和 AI 应用，提升准确率和业务价值。</p>
+      <table class="cmp-table">
+        <tr><th>阶段</th><th>典型动作</th><th>易踩坑</th></tr>
+        <tr><td>需求确认</td><td>跟业务方一起跑流程，标注隐性判断</td><td>只听负责人，不问一线</td></tr>
+        <tr><td>架构设计</td><td>定数据流、上下文、人审节点、兜底</td><td>没有兜底，模型挂了业务停</td></tr>
+        <tr><td>开发</td><td>每周跟客户对一次效果，迭代</td><td>闷头开发 3 个月交付</td></tr>
+        <tr><td>测试</td><td>用真实场景测，不只测 happy path</td><td>用合成数据测，上线翻车</td></tr>
+      </table>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">10</span>上线后：智能体会"能力衰减"</h4>
+      <p><b>这是最被忽略的阶段</b>。智能体感觉"越用越聪明"，到一定阶段会"变笨"。</p>
+      <div class="quote">"智能体到一定阶段，项目 close 了、团队撤了、FDE 撤了以后，你会发现这个智能体又开始逐渐变笨。变笨的原因是业务场景会出现漂移。企业业务在发展，场景发生微妙变化，但智能体没变。人会持续学习，智能体如果没有人在背后引导，学得没有人好，因为企业业务中有很多隐性上下文不体现在线上数据里。"</div>
+      <table class="cmp-table">
+        <tr><th>衰减原因</th><th>应对</th></tr>
+        <tr><td>业务场景漂移</td><td>定期重新梳理上下文和样本</td></tr>
+        <tr><td>隐性上下文不在线上数据</td><td>定期跟业务方对一次"最近有什么变化"</td></tr>
+        <tr><td>大模型升级</td><td>主动评估对业务影响，不能无脑换</td></tr>
+      </table>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">11</span>持续运维：项目 close 后 FDE 不能撤</h4>
+      <ul>
+        <li><b>远程追踪指标</b>：响应速度、使用频率、准确率、人工兜底率</li>
+        <li><b>性能下降及时介入</b>：发现衰减主动调优</li>
+        <li><b>大模型升级主动评估</b>：评估对业务影响，跟客户沟通</li>
+        <li><b>计费模式改变</b>：从项目费变维护费/订阅费——这是 FDE 不被撤的商业模式保障</li>
+      </ul>
+      <div class="ok-box"><b>关键洞察</b>：FDE 的长期价值不在"交付项目"，而在"持续对齐业务价值"。计费模式从一次性转订阅，是 FDE 商业模式护城河。</div>
+    </div>
+  </div>
+
+  <!-- L4 -->
+  <div class="level-block">
+    <div class="lv-head"><span class="lv-tag">L4 组织视角</span><h3>FDE 在组织中的位置</h3></div>
+
+    <div class="lesson">
+      <h4><span class="ico">12</span>前线团队三人组 + 后端保障</h4>
+      <p>FDE 只是"前线团队"中的一个角色，不是孤胆英雄：</p>
+      <table class="cmp-table">
+        <tr><th>角色</th><th>职责</th><th>缺了会怎样</th></tr>
+        <tr><td class="hl">FDE（前线）</td><td>需求翻译、方案设计、端到端交付</td><td>项目永远停在 demo</td></tr>
+        <tr><td class="hl">AIBP（前线）</td><td>业务专家，对业务目标负责</td><td>AI 效果无法对齐业务价值，KPI 变成"虚假数字化表现"</td></tr>
+        <tr><td class="hl">数据管家（前线）</td><td>数据治理、数据质量</td><td>数据不就绪，模型上线即灾难</td></tr>
+        <tr><td class="hl">AI 技术中台（后端）</td><td>平台、工具、模型服务</td><td>前线扔出去打仗没枪支弹药</td></tr>
+        <tr><td class="hl">平台团队（后端）</td><td>基础设施、运维</td><td>后勤跟不上，前线送死</td></tr>
+      </table>
+      <div class="warn-box"><b>血泪教训：缺业务 Owner 的项目必败</b>。客户数据就绪程度好、数字化团队基础好，就缺一个业务 Owner。抱着侥幸心理把 FDE 派过去督战，两个月后业务 Owner 始终没到位，项目没取得好结果。原因是没有业务 Owner，AI 执行效果无法对齐到真实业务价值。</div>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">13</span>FDE 与历史角色的区别</h4>
+      <table class="cmp-table">
+        <tr><th>角色</th><th>核心目标</th><th>与 FDE 区别</th></tr>
+        <tr><td>解决方案架构师 SA</td><td>标准化方案销售</td><td>SA 卖标准品，FDE 做定制落地</td></tr>
+        <tr><td>项目经理 PM</td><td>进度/成本/质量</td><td>PM 管流程，FDE 管业务翻译和技术落地</td></tr>
+        <tr><td>产品经理</td><td>标准化产品</td><td>产品做 ToB/ToC 标品，FDE 做贴身定制</td></tr>
+        <tr><td>DevOps/SRE</td><td>基础设施自动化</td><td>DevOps 管交付流水线，FDE 管业务落地</td></tr>
+        <tr><td>PMP 认证</td><td>项目管理方法论</td><td>PMP 假设流程标准化，FDE 面对高度不确定</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- L5 -->
+  <div class="level-block">
+    <div class="lv-head"><span class="lv-tag">L5 职业决策</span><h3>你该不该转、怎么转</h3></div>
+
+    <div class="lesson">
+      <h4><span class="ico">14</span>程序员转型 FDE：三种声音</h4>
+      <table class="cmp-table">
+        <tr><th>派别</th><th>观点</th><th>核心论据</th></tr>
+        <tr><td class="hl">犀利否定派</td><td>10 个人里只有 1-2 个能转</td><td>封闭的程序员没能力转，也不适合</td></tr>
+        <tr><td class="hl">能力拆解派</td><td>不是换名字，是底层能力重构</td><td>反直觉：产品经理和测试比研发更适合转，因为程序员是点状思维，测试是面状</td></tr>
+        <tr><td class="hl">黄金窗口派</td><td>2026-27 是最后窗口</td><td>再过一两年 AI 更强大，复合人才窗口收窄</td></tr>
+      </table>
+      <p><b>三条迁移路径</b>：</p>
+      <ul>
+        <li><span class="tag orange">AI 能力</span>每月 token 消费不到 500 块就别当程序员了，被碾压</li>
+        <li><span class="tag orange">业务能力</span>别再琢磨代码了，去跟业务人员混在一起</li>
+        <li><span class="tag orange">Go-to-market</span>把自己卖出去：说服力、沟通力、获得市场认可</li>
+      </ul>
+      <div class="quote">"别离职，90% 的最好机会在当前公司。成为你所在部门或团队的'首席 AI 落地官'，把 AI 落地、拿到 ROI、让公司看到降本增效。"<span class="src">—— 程序员最该做的事</span></div>
+    </div>
+
+    <div class="lesson">
+      <h4><span class="ico">15</span>银弹辩证与 FDE 演变路径</h4>
+      <p>所有"某某是银弹"的讨论，都隐含一种错误假设：<b>AI 落地问题可以被单一要素解决</b>。但 AI 落地是系统性问题——需求、数据、技术、流程、合规缺一不可。</p>
+      <p><b>FDE 演变路径</b>：<span class="tag">岗位</span>→<span class="tag">能力内化</span>→<span class="tag">岗位消融</span></p>
+      <ul>
+        <li><b>初期</b>：作为专门岗位存在，以招聘、培养、规模化</li>
+        <li><b>中期</b>：能力逐渐渗透到其他角色</li>
+        <li><b>后期</b>：FDE 能力成为所有技术人的基本功，"FDE 工程师"岗位变得不再重要——就像 DevOps 的演变</li>
+      </ul>
+      <div class="quote">"真正的 AI 转型只有 CEO 能搞定，牵涉到各种利益关系、组织关系、新激励措施。找 CTO 是没有用的，CTO 是只会保护自己的。"<span class="src">—— 转型的权力归属</span></div>
+      <div class="ok-box"><b>最终目标</b>：不是让每个人都是 FDE，而是让每个做 AI 落地的人都具备 FDE 的降维能力。</div>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:24px">
+    <button class="cover-cta" data-go="cases">看实战案例 →</button>
+  </p>
+</section>
+
+<!-- ============ 案例库 ============ -->
+<section class="section" id="cases">
+  <div class="page-title">
+    <span class="badge">PART 02</span>
+    <h2>实战案例库 · 8 大行业真实场景</h2>
+  </div>
+  <p style="color:#555;font-size:14px;margin:-12px 0 18px">每个案例都包含：客户背景 → 🪨 现场暴露的坑 → 🔍 FDE 诊断 → ✅ 分步解决方案 → 📊 结果与教训。<b>这才是 FDE 真正干的事</b>。</p>
+
+  <div class="case-filter">
+    <button class="active" data-filter="all">全部</button>
+    <button data-filter="manufacturing">🏭 制造</button>
+    <button data-filter="finance">🏦 金融</button>
+    <button data-filter="healthcare">🏥 医疗</button>
+    <button data-filter="retail">🛒 零售</button>
+    <button data-filter="logistics">🚚 物流</button>
+    <button data-filter="legal">⚖️ 法律</button>
+    <button data-filter="gov">🏛️ 政府</button>
+    <button data-filter="ecommerce">🛍️ 电商</button>
+  </div>
+
+  <div id="casesContainer"></div>
+
+  <p style="text-align:center;margin-top:24px">
+    <button class="cover-cta" data-go="game">去通关游戏练手 →</button>
+  </p>
+</section>
+
+<!-- ============ 游戏 ============ -->
+<section class="section" id="game">
+  <div class="page-title">
+    <span class="badge">PART 03</span>
+    <h2>通关游戏 · 绿皮书公路之旅</h2>
+  </div>
+
+  <div class="game-status">
+    <div class="stat"><div><div class="label">关卡</div><div class="val" id="curStage">1/10</div></div></div>
+    <div class="stat"><div><div class="label">积分</div><div class="val" id="totalScore">0</div></div></div>
+    <div class="trust-meter">
+      <div class="t-label">客户信任度 <span id="trustVal">70</span>/100</div>
+      <div class="trust-bar"><div class="trust-fill" id="trustFill"></div></div>
+    </div>
+  </div>
+
+  <div id="stageContainer"></div>
+
+  <div class="game-result" id="gameResult">
+    <h3 style="margin:0">🚀 通关认证</h3>
+    <div class="rank" id="finalRank">—</div>
+    <p id="finalDesc" style="max-width:640px;margin:0 auto;opacity:.9"></p>
+    <div class="breakdown" id="breakdown"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="cover-cta" onclick="restartGame()">再来一局</button>
+      <button class="cover-cta" data-go="quiz">去做驾考画像 →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 测试 ============ -->
+<section class="section" id="quiz">
+  <div class="page-title">
+    <span class="badge">PART 04</span>
+    <h2>驾考画像 · 30 题六维能力体检</h2>
+  </div>
+
+  <div class="quiz-intro">
+    <h3>这不是智商测试，是性格与能力倾向测试</h3>
+    <p>30 题，6 个维度，每维度 5 题满分 25 分。最终给你画一张雷达图 + 6 档画像分级，附详细职业转型路径。请凭直觉作答，不要想"标准答案"。</p>
+    <div class="dims">
+      <span class="tag">沟通力 Com</span>
+      <span class="tag">抽象力 Abs</span>
+      <span class="tag">方案力 Arch</span>
+      <span class="tag">承担力 Own</span>
+      <span class="tag">商业感 Biz</span>
+      <span class="tag">学习力 Learn</span>
+    </div>
+  </div>
+
+  <div id="quizContainer"></div>
+  <p style="text-align:center"><button class="quiz-submit" id="quizSubmit" disabled>生成我的画像</button></p>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-head">
+      <div class="avatar">
+        <div class="emoji" id="rEmoji">🧭</div>
+        <h3 id="rTitle">—</h3>
+        <div class="sub" id="rSub">—</div>
+      </div>
+      <div class="radar-wrap">
+        <canvas id="radarCanvas" width="320" height="320"></canvas>
+      </div>
+    </div>
+    <div id="dimBars"></div>
+    <div class="advice">
+      <h4>🧭 职业转型建议</h4>
+      <div id="rAdvice"></div>
+    </div>
+    <div class="advice" style="border-color:var(--green-soft);background:#eef4ee">
+      <h4>🎯 一句话总结</h4>
+      <div id="rSummary"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  FDE 绿皮书 v2 · 基于 <a href="https://mp.weixin.qq.com/s/NE7aa7NPLWgiohjggn-y1w" target="_blank">AIDD 技术峰会 K+ Talk《FDE 是不是自带银弹》</a> 整理 · vibe coding 出品
+</footer>
+
+<script>
+/* ============ 导航 ============ */
+function go(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.toggle('active', b.dataset.go===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click', ()=>go(el.dataset.go)));
+
+/* ============ 案例库：8 行业实战案例 ============ */
+const casesData = [
+  {
+    cat:"manufacturing", ico:"🏭", title:"制造业 · 设备故障预测",
+    tags:[{cls:"ind",txt:"制造"},{cls:"diff-mid",txt:"中等难度"},{cls:"",txt:"POC 阶段"}],
+    bg:"某汽车零部件工厂，300+ 台关键设备，年非计划停机损失约 2000 万。客户诉求：用 AI 预测设备故障，提前维护，减少停机损失。销售已经给老板画饼说'下周能看到效果'。",
+    pit:"客户 CTO 要求下周上线。FDE 进场查看数据：设备有秒级振动/温度数据但只存了两周，小时级数据存了三年，<b>缺分钟级数据</b>——而设备故障预测需要分钟级时序数据才能捕捉早期征兆。销售已签合同，老板在等结果。",
+    diag:"<b>数据基础不就绪，硬上必死。</b>这是'翻译缺失'的典型——客户说'故障预测'，FDE 要翻译成'分钟级时序数据 + 故障标签 + 模型'，并指出数据缺哪一段。没有分钟级数据，模型上线就是灾难，客户会觉得'AI 不行'。",
+    sol:[
+      "<b>紧急叫停'下周上线'</b>：跟客户 CTO 单独沟通数据现状，展示其他客户分钟级 vs 秒级数据的预测效果差距，用真实案例说话。",
+      "<b>制定分阶段计划</b>：T0~T1.5 月部署分钟级数据采集；同时用秒级降采样+历史小时级做'弱基线'模型，验证可行性，不让客户空等。",
+      "<b>过渡方案</b>：让客户先用规则告警（振动阈值）过渡，避免空窗期没有保护。",
+      "<b>正式建模</b>：T1.5~T3 月分钟级数据到位后训练正式模型，灰度上线 5 台关键设备，对比预测 vs 实际故障，调优 2 周后全量。",
+      "<b>持续对齐</b>：全程跟客户每周对一次，主动暴露 corner case（如换型、停机维护导致的数据漂移）。"
+    ],
+    res:"3.5 个月上线，首年减少非计划停机 32%，ROI 6 个月回收。客户 CTO 后来说'幸亏当时没让你下周上线'。<b>教训：耐心是稀缺能力，'数据不就绪时要有耐心'比硬上要难得多。</b>"
+  },
+  {
+    cat:"finance", ico:"🏦", title:"金融 · 智能客服",
+    tags:[{cls:"ind",txt:"金融"},{cls:"diff-hard",txt:"高难度"},{cls:"",txt:"Demo 陷阱"}],
+    bg:"某股份制银行，日均客服咨询 50 万通。客户诉求：用大模型替代 30% 人工客服，降本。销售做了 demo，跑通了'信用卡挂失'这 1 个流程，客户很满意，合同已签，3 个月交付。",
+    pit:"FDE 进场后发现：73 种业务流程里<b>只有 5 种数据齐全</b>；安全合规要求人工审核节点；历史 IVR 系统 15 年老代码不能动；业务方说的'自动化工单'中间夹着大量人工判断；销售 demo 只跑了那 1 个能跑通的，客户以为 73 种都能用。",
+    diag:"<b>demo 思维陷阱。</b>销售只展示正面，没暴露 corner case。客户在不知情下签了合同，本质是'为了推进项目而推进项目'。真正的 73 种流程里，只有 5 种能上 AI，其余要么数据不全、要么合规不让、要么人工判断占比过高。",
+    sol:[
+      "<b>知情决策会</b>：紧急召开，把 73 种流程逐一过一遍，标出 5 种可做、23 种数据待补、45 种需人工兜底。给客户看真实能力边界。",
+      "<b>重新定义 MVP</b>：先上 5 种可做的，覆盖 30% 咨询量（不是 73 种的 30%）。明确告知客户预期，重新对齐合同。",
+      "<b>架构设计</b>：智能体 + 知识库 + 工具调用 + 人审节点。合规要求高的（如挂失、退款）走'AI 初审 + 人工 30 秒确认'。",
+      "<b>历史系统不动</b>：在 IVR 前面加一层 AI 网关，老系统作为兜底，不碰 15 年老代码。",
+      "<b>灰度上线</b>：先 5% 流量，监控转人工率、解决率、客诉率，达标后扩量。"
+    ],
+    res:"4 个月上线 5 种流程，覆盖 28% 咨询量，转人工率 12%，客户满意度持平。后续 8 个月又补了 12 种流程。客户 CCO 说'比销售承诺的少，但比销售承诺的稳'。<b>教训：只展示正面的 demo 不是专业的 demo。</b>"
+  },
+  {
+    cat:"healthcare", ico:"🏥", title:"医疗 · 病历质控",
+    tags:[{cls:"ind",txt:"医疗"},{cls:"diff-hard",txt:"高难度"},{cls:"",txt:"本土化"}],
+    bg:"某三甲医院，年出院 8 万份病历。客户诉求：用 AI 自动质控病历，减少医生写病历和质控员审病历的工作量。海外有成熟方案，客户想直接搬过来。",
+    pit:"国内病历质控规则高度本地化：<b>每个省份质控细则不同</b>；三甲 vs 二甲规则不同；电子病历系统是 5 家厂商的，接口全不一样；医生写的'自由文本'里夹大量缩写和科内黑话；合规要求所有 AI 建议必须留痕可审计。海外方案直接搬过来根本跑不动。",
+    diag:"<b>FDE 本质是'翻译'，翻译依赖语境。</b>海外方案的语境是标准化流程+成熟客户认知；中国语境是流程混乱+客户认知模糊。直接搬海外标准会跟 PMP 一样水土不服——不是翻译器不好，是输入的语言不同。",
+    sol:[
+      "<b>不移植标准文本，移植标准结构</b>：保留海外方案的'规则引擎 + LLM 校验 + 人工复核'三层架构，但规则库全部重写为本地化。",
+      "<b>驻场理解业务</b>：跟质控员泡 2 周，把 300 条质控规则逐条翻译成'可执行规则 + 需 LLM 判断的模糊项'。",
+      "<b>系统适配</b>：5 家厂商系统分别做适配层，不动原系统，加一层质控网关。",
+      "<b>合规留痕</b>：LLM 判断项全部留痕——输入、输出、模型版本、人工复核结果，满足审计要求。",
+      "<b>灰度试点</b>：先在呼吸科试点 1 个月，质控员双跑（AI + 人工），对比一致率，达标后推广。"
+    ],
+    res:"5 个月上线，呼吸科一致率 89%，医生改病历工作量降 40%，质控员工作量降 60%。后推广到全院 12 个科室。<b>教训：不移植标准文本，移植标准结构。前提条件做本土化降级，角色定义和能力模型保留。</b>"
+  },
+  {
+    cat:"retail", ico:"🛒", title:"零售 · 智能选品",
+    tags:[{cls:"ind",txt:"零售"},{cls:"diff-hard",txt:"高难度"},{cls:"",txt:"缺业务 Owner"}],
+    bg:"某连锁便利店，2000+ 门店。客户诉求：用 AI 预测各门店该进什么货，降低滞销和缺货。数据和数字化基础都不错。",
+    pit:"<b>业务 Owner 始终没到位。</b>供应链 VP 说'我支持'，商品 VP 说'我也支持'，但谁都不愿意对选品结果负责。FDE 抱着侥幸心理自己督战推下去，2 个月后项目卡死：AI 建议的品类没人执行，因为'这不是我们部门的事'。",
+    diag:"<b>缺业务 Owner 的项目必败。</b>AI 执行效果无法对齐到真实业务价值，KPI 会变成'虚假的数字化表现'——数字好看（预测准确率 85%）但谁从中受益、怎么体现讲不清楚，推动事情缺少抓手。",
+    sol:[
+      "<b>叫停技术推进</b>：向客户 CEO 汇报真实卡点——不是技术问题，是组织问题。展示'虚假数字化表现'的风险。",
+      "<b>最小可行案例撬动认知</b>：选 10 家门店做 4 周对照实验，AI 选品 vs 人工选品，量化滞销率/缺货率/毛利差异。",
+      "<b>让 CEO 任命业务 Owner</b>：商品 VP 对结果负责，KPI：试点门店毛利提升 X%，滞销率降 Y%。FDE 对技术负责。",
+      "<b>CEO 投入资源建体系</b>：成立'AI 选品小组'（商品 Owner + FDE + 数据管家 + 供应链代表），每周对齐。",
+      "<b>规模化</b>：试点达标后推广，业务 Owner 主导推广，FDE 转为技术顾问。"
+    ],
+    res:"业务 Owner 到位后 6 周跑出结果，试点门店毛利提升 7%，滞销率降 18%。CEO 决定全量推广。FDE 后来回忆'前 2 个月是白干的，没有 Owner 一切都是空转'。<b>教训：真正的 AI 转型只有 CEO 能搞定，CTO 推不动业务方变革。</b>"
+  },
+  {
+    cat:"logistics", ico:"🚚", title:"物流 · 路径优化",
+    tags:[{cls:"ind",txt:"物流"},{cls:"diff-mid",txt:"中等难度"},{cls:"",txt:"范围蔓延"}],
+    bg:"某快递公司，日均 500 万单。客户诉求：用 AI 优化配送路径，降低配送成本。开发到第 6 周，路径优化核心功能已调通 80%。",
+    pit:"客户新来的副总说'这个 AI 应该顺便把报表也生成了，不复杂吧'。FDE 答应了。第 8 周又加'顺便预测下旺季运力需求'。第 10 周再加'顺便做个司机调度看板'。<b>3 个月交付期到了，主功能路径优化还没调完，附加功能堆了一堆半成品。</b>",
+    diag:"<b>范围蔓延。</b>每个'顺便加一下'都是项目失控信号。FDE 没有守住范围，最后背锅的是 FDE 自己——客户不会记得自己加的需求，只会记得你没按时交付。",
+    sol:[
+      "<b>紧急叫停新增需求</b>：跟客户副总开'范围对齐会'。",
+      "<b>需求分类</b>：把所有需求列出来，分三类——核心交付（路径优化）、合理延伸（运力预测）、范围外（报表、看板）。",
+      "<b>技术影响翻译成业务决策</b>：'加报表要 2 周，路径优化要延后 2 周，旺季前上不了线，损失 X 万'。让客户看到代价。",
+      "<b>让客户做选择</b>：A 加预算加人，B 拿掉别的需求，C 延期。客户选 B，砍掉报表和看板，保留运力预测作为二期。",
+      "<b>建立变更控制流程</b>：后续任何新增需求走变更单，客户签字，重新评估工期和预算。"
+    ],
+    res:"路径优化按期上线，配送成本降 8%。运力预测作为二期 2 个月后上线。客户副总后来承认'当时差点把项目搞黄'。<b>教训：FDE 沟通力的核心——把技术影响翻译成业务决策。客户必须知情，不是 FDE 替客户扛。</b>"
+  },
+  {
+    cat:"legal", ico:"⚖️", title:"法律 · 合同审核",
+    tags:[{cls:"ind",txt:"法律"},{cls:"diff-mid",txt:"中等难度"},{cls:"",txt:"智能体衰减"}],
+    bg:"某律所，年审核合同 1.2 万份。客户诉求：用 AI 自动审核合同条款风险，减少律师工作量。上线前 3 个月效果很好，准确率 92%。",
+    pit:"<b>第 4 个月开始准确率下滑</b>，律师抱怨'AI 越来越笨'。FDE 团队已经撤回总部，没人追踪。真相：客户业务在发展，合同类型从标准采购合同扩展到股权投资、跨境贸易等新场景，但智能体没变。",
+    diag:"<b>智能体能力衰减。</b>业务场景漂移——企业业务在发展，场景发生微妙变化，但智能体没变。人会持续学习，智能体如果没有人在背后引导，学得没有人好，因为企业业务中有很多隐性上下文不体现在线上数据里。",
+    sol:[
+      "<b>紧急介入</b>：远程拉取近 1 个月准确率、转人工率、律师反馈数据，确认衰减范围。",
+      "<b>识别漂移点</b>：跟资深律师开 2 次复盘会，识别新增合同类型和漂移点。",
+      "<b>补充训练</b>：重新标注 200 份新类型合同，补充到训练集；调整 system prompt 加入新场景的判断规则。",
+      "<b>建立持续追踪机制</b>：FDE 每月远程看一次指标，每季度跟律师对一次'最近有什么新合同类型'。",
+      "<b>计费模式转变</b>：从项目费转维护费/订阅费——这是 FDE 不被撤的商业模式保障。"
+    ],
+    res:"调优后准确率恢复到 90%。建立持续追踪后，6 个月内再未出现明显衰减。律所转为年度订阅，FDE 团队保留 1 人轻量介入。<b>教训：项目 close 后 FDE 不能撤。智能体会衰减，需要人持续引导。计费模式从项目费转订阅，是 FDE 长期价值护城河。</b>"
+  },
+  {
+    cat:"gov", ico:"🏛️", title:"政府 · 政务问答",
+    tags:[{cls:"ind",txt:"政府"},{cls:"diff-mid",txt:"中等难度"},{cls:"",txt:"大模型升级"}],
+    bg:"某市政府，12345 热线日均 3 万通。客户诉求：用 AI 做政务问答系统，分流简单咨询。系统已上线 8 个月，运行稳定。",
+    pit:"大模型厂商通知'<b>下月停用旧版 API</b>，新版 prompt 兼容性有变化，准确率可能波动'。FDE 团队当时正忙新项目，想着'到了再说'。结果停服前 1 周紧急迁移，新版 prompt 导致 30% 政务问答答非所问，市民投诉激增，被媒体曝光。",
+    diag:"<b>大模型升级冲击没有主动管理。</b>FDE 的核心价值之一就是'大模型升级要主动评估对业务影响'。紧急迁移必然出问题——这不是技术问题，是流程问题。",
+    sol:[
+      "<b>事后建立'大模型升级 SOP'</b>：收到厂商通知后 24h 内启动评估。",
+      "<b>回归测试</b>：用历史 5000 条真实问答做对比，输出兼容性报告。",
+      "<b>prompt 迁移</b>：逐条调整不兼容的 prompt，保留新旧版本对照。",
+      "<b>灰度切换</b>：先 5% 流量切新版，监控准确率、转人工率、市民满意度，72h 无异常扩到 20%，再 1 周后全量。",
+      "<b>回滚预案</b>：保留旧版 API 调用通道，出问题 30 分钟内回滚。"
+    ],
+    res:"建立 SOP 后，后续 2 次大模型升级零事故。灰度切换期间发现 1 次 prompt 兼容问题，提前修复避免了上线事故。<b>教训：FDE 主动管理不确定性。大模型升级要主动评估，不能无脑换，也不能等到了再说。</b>"
+  },
+  {
+    cat:"ecommerce", ico:"🛍️", title:"电商 · 续约谈判",
+    tags:[{cls:"ind",txt:"电商"},{cls:"diff-mid",txt:"中等难度"},{cls:"",txt:"商业模式"}],
+    bg:"某电商平台，AI 商品描述生成系统上线 1 年。诉求：续约维护服务。CFO 说'预算紧，维护费砍一半，或者不要维护了，反正系统跑得好好的'。",
+    pit:"FDE 团队只在做'系统维护'，<b>没有持续展示价值</b>。CFO 认为'系统跑着就行，维护费是成本项'。同意砍一半→追踪力度减半→智能体衰减没人管→半年后出问题客户骂你不专业。不同意砍→客户直接不续约。",
+    diag:"<b>FDE 商业感缺失。</b>把'维护'做成了'成本项'，而不是'价值项'。FDE 要做的是价值翻译，不是博弈对抗——威胁停服只会让客户觉得你在敲诈。",
+    sol:[
+      "<b>准备'价值报告'</b>：过去 1 年追踪发现并解决的 12 个问题（避免的损失量化）；持续优化的 8 项效果；大模型升级避免的 2 次事故。",
+      "<b>重新定义服务</b>：'价值保障费'而非'维护费'。服务包括持续追踪+主动调优+大模型升级管理+季度业务对齐。",
+      "<b>给三档方案</b>：A 全量续约（保障当前效果）；B 砍 30% 降级为基础维护（不主动调优，出问题才响应）；C 停服（风险自担，列出可能后果）。",
+      "<b>让 CFO 做选择</b>：不是'砍不砍'而是'要什么档次的服务'。"
+    ],
+    res:"CFO 选了 A 档全量续约，并追加了'季度业务对齐'增值服务。FDE 团队保留 2 人轻量介入，从'成本项'变成'价值项'。<b>教训：把成本项变成价值项。展示 ROI——降本多少、增效多少、避免多少事故。客户从'要不要砍'变成'不能砍'。</b>"
+  }
+];
+
+function renderCases(filter='all'){
+  const list = filter==='all' ? casesData : casesData.filter(c=>c.cat===filter);
+  document.getElementById('casesContainer').innerHTML = list.map(c=>`
+    <div class="case-item" data-cat="${c.cat}">
+      <div class="case-head" onclick="this.parentElement.classList.toggle('open')">
+        <div class="case-ico">${c.ico}</div>
+        <div class="case-title">
+          <h4>${c.title}</h4>
+          <div class="case-tags">${c.tags.map(t=>`<span class="${t.cls}">${t.txt}</span>`).join('')}</div>
+        </div>
+        <div class="toggle">▶</div>
+      </div>
+      <div class="case-body">
+        <div class="case-sec bg"><h5>📋 客户背景</h5>${c.bg}</div>
+        <div class="case-sec pit"><h5>🪨 现场暴露的坑</h5>${c.pit}</div>
+        <div class="case-sec diag"><h5>🔍 FDE 诊断</h5>${c.diag}</div>
+        <div class="case-sec sol"><h5>✅ 解决方案（分步骤）</h5>${c.sol.map((s,i)=>`<div class="step"><div class="n">${i+1}</div><div class="txt">${s}</div></div>`).join('')}</div>
+        <div class="case-sec res"><h5>📊 结果与教训</h5>${c.res}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.case-filter button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.case-filter button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCases(btn.dataset.filter);
+  });
+});
+
+renderCases();
+
+/* ============ 游戏：10 关 + 信任度机制 ============ */
+const stages = [
+  {
+    no:"STAGE 01", title:"POC 立项前夜", loc:"客户工厂 · 凌晨",
+    meta:{阶段:"POC", 角色:"客户CTO", 决策影响:"影响数据质量与上线节奏"},
+    scenes:[
+      {who:"客户CTO", text:"我们要做设备故障预测。你们 demo 跑得挺漂亮，下周就上线吧，老板催得紧。"},
+      {who:"你（FDE）内心", text:"看了眼数据：秒级只存了两周，小时级存了三年，根本没有他们想要的分钟级数据。"}
+    ],
+    options:[
+      {t:"答应下周上线，先跑起来再说，数据边用边补。", score:0, trust:-15, tag:"bad",
+       fb:"典型 demo 思维。",
+       why:"没有分钟级数据，模型上线就是灾难。客户会觉得'AI 不行'，锅全扣你头上。这正是'AI 落地失败的根本原因不在技术，在翻译缺失'。"},
+      {t:"告诉客户数据不就绪，建议从现在开始收集分钟级数据，一个半月后加上降采样数据凑够两个月再上。", score:20, trust:+10, tag:"good",
+       fb:"专业 FDE 的做法。",
+       why:"耐心是稀缺能力——'数据不就绪时要有耐心'，比硬上要难得多。客户会记住你的诚实，长期信任反而上升。"},
+      {t:"直接拒绝项目，说数据太烂做不了。", score:8, trust:-5, tag:"mid",
+       fb:"诚实但粗暴。",
+       why:"FDE 不是简单说'不行'，而是给出'怎么才能行'的路径。光指出问题不给方案，客户觉得你能力不行。"}
+    ]
+  },
+  {
+    no:"STAGE 02", title:"Demo 该展示什么", loc:"客户总部 · 季度汇报",
+    meta:{阶段:"POC", 角色:"销售", 决策影响:"影响客户认知与签单"},
+    scenes:[
+      {who:"销售", text:"客户老板今天心情不错，咱们 demo 只展示能跑通的那 1 个流程就行，别提那 73 种里跑不通的，先把单子签下来。"}
+    ],
+    options:[
+      {t:"听销售的，只展示正面效果，先把单签下来。", score:0, trust:-20, tag:"bad",
+       fb:"'只展示正面的 demo 不是专业的 demo。'",
+       why:"上线后客户发现 72 种流程跑不通，你已经被卷铺盖了。短期签单换来长期信誉崩盘。"},
+      {t:"展示正面的同时，主动暴露数据不就绪、corner case 表现差的场景，让客户在充分知情下决定要不要干。", score:20, trust:+15, tag:"good",
+       fb:"FDE 在 demo 阶段的两件事。",
+       why:"展示 AI 能做到什么效果（含负面），暴露不就绪场景。客户会觉得你靠谱，反而更愿意签——因为他们在做知情决策。"},
+      {t:"展示正面，并在合同里加免责条款，规避 corner case 责任。", score:6, trust:-8, tag:"mid",
+       fb:"法律上安全，但没解决客户真实问题。",
+       why:"FDE 是修桥的人，不是修免责条款的人。客户看出来你要甩锅，信任下降。"}
+    ]
+  },
+  {
+    no:"STAGE 03", title:"我跟他们不一样", loc:"客户现场 · 需求评审",
+    meta:{阶段:"需求", 角色:"客户业务负责人", 决策影响:"影响方案本土化程度"},
+    scenes:[
+      {who:"客户业务负责人", text:"你们那套标准方案别家能用，我们不行。我们流程特殊——数据库我都给你们改成几百个分支了，你们得按我们的来。"}
+    ],
+    options:[
+      {t:"坚持搬海外 FDE 标准流程，告诉客户应该先做流程标准化再上 AI。", score:2, trust:-12, tag:"bad",
+       fb:"PMP 水土不服的翻版。",
+       why:"'国内客户总觉得我跟他们不一样'——不是客户不对，是你不懂本土语境。强行标准化会被踢出局。"},
+      {t:"承认特殊性，但识别哪些是真特殊、哪些是混乱，把混乱部分本土化降级，标准结构保留。", score:20, trust:+10, tag:"good",
+       fb:"正解：不移植标准文本，移植标准结构。",
+       why:"前提条件做本土化降级，角色定义和能力模型保留。客户觉得你既懂他又不盲从。"},
+      {t:"全盘接受客户所有特殊要求，几百个分支都照做。", score:4, trust:+5, tag:"mid",
+       fb:"讨好客户但埋雷。",
+       why:"FDE 要做需求翻译，不是需求服从。短期客户高兴，长期项目烂尾，锅还是你的。"}
+    ]
+  },
+  {
+    no:"STAGE 04", title:"缺业务 Owner", loc:"客户高管会议室 · 项目启动会",
+    meta:{阶段:"立项", 角色:"你（FDE）内心", 决策影响:"影响项目成败与组织变革"},
+    scenes:[
+      {who:"你（FDE）内心", text:"数据就绪程度好、数字化团队基础好，但业务 Owner 始终没到位。抱着侥幸心理，你想自己督战把项目推下去。"}
+    ],
+    options:[
+      {t:"自己上，当半个业务 Owner 用，硬把项目推下去。", score:2, trust:-10, tag:"bad",
+       fb:"血泪教训。",
+       why:"两个月后业务 Owner 始终没到位，项目没取得好结果。没有业务 Owner，AI 执行效果无法对齐真实业务价值，KPI 变成'虚假的数字化表现'。"},
+      {t:"明确向客户 CEO 提出：业务 Owner 不到位就先做 6-12 个月组织前提建设，再正式引入 FDE。", score:20, trust:+12, tag:"good",
+       fb:"专业 FDE 敢于说不。",
+       why:"先做最小可行案例撬动 CEO 认知，再让 CEO 投入资源建体系——'真正的转型需要 CEO 推动'。"},
+      {t:"让 CTO 推动业务方变革。", score:4, trust:-3, tag:"mid",
+       fb:"找错人。",
+       why:"CTO 只会保护自己那块利益，推不动业务方变革。AI 转型牵涉利益关系、组织关系、新激励措施，只有 CEO 能搞定。"}
+    ]
+  },
+  {
+    no:"STAGE 05", title:"开发中需求变更", loc:"开发第 6 周 · 客户电话",
+    meta:{阶段:"开发", 角色:"客户业务方", 决策影响:"影响交付节奏与范围控制"},
+    scenes:[
+      {who:"客户业务方", text:"我们新来了个副总，他觉得这个 AI 应该顺便把报表也生成了，你们加一下呗，应该不复杂吧？"}
+    ],
+    options:[
+      {t:"直接答应，反正 AI 加个报表功能也不难。", score:2, trust:-5, tag:"bad",
+       fb:"范围蔓延的开端。",
+       why:"'顺便加一下'是项目失控的典型信号。每个'不复杂'累积起来就是延期和烂尾。FDE 不守住范围，最后背锅的是你。"},
+      {t:"评估影响后，明确告诉客户这是范围变更，需要重新排期或追加预算，让客户做选择。", score:20, trust:+8, tag:"good",
+       fb:"专业做法。",
+       why:"FDE 的沟通力体现：把技术影响翻译成业务决策。客户可选加预算、可选拿掉别的需求、可选延期，但必须知情。"},
+      {t:"直接拒绝，说合同里没这条。", score:6, trust:-8, tag:"mid",
+       fb:"僵硬。",
+       why:"合同是对的，但 FDE 不是合同执行机器。客户觉得你不配合，下次有需求不找你商量了。"}
+    ]
+  },
+  {
+    no:"STAGE 06", title:"智能体变笨了", loc:"运维群 · 上线第 4 个月",
+    meta:{阶段:"运维", 角色:"客户业务员", 决策影响:"影响续约与口碑"},
+    scenes:[
+      {who:"客户业务员", text:"这个 AI 前几个月还挺准的，最近怎么越来越不准了？是不是你们模型退化了？"}
+    ],
+    options:[
+      {t:"回复'模型没变，是你们用错了'，让客户自查使用方式。", score:0, trust:-18, tag:"bad",
+       fb:"甩锅给客户。",
+       why:"真相是业务场景漂移——客户业务在发展，场景发生微妙变化，但智能体没变。这种回应让客户觉得你在推卸责任。"},
+      {t:"远程追踪响应速度、使用频率、准确率等指标，确认场景漂移后主动介入调优，并解释'智能体会衰减'机制。", score:20, trust:+12, tag:"good",
+       fb:"'项目 close 后 FDE 不能撤'的原因。",
+       why:"隐性上下文不体现在线上数据里，需要人持续引导。主动追踪+主动解释+主动调优，客户觉得你专业。"},
+      {t:"直接给客户升级到最新大模型，用更强的模型覆盖问题。", score:8, trust:+3, tag:"mid",
+       fb:"治标。",
+       why:"大模型升级要主动评估对业务影响，不是无脑换。换模型不解决场景漂移，还可能引入新问题。"}
+    ]
+  },
+  {
+    no:"STAGE 07", title:"大模型升级冲击", loc:"运维第 8 个月 · 厂商通知",
+    meta:{阶段:"运维", 角色:"厂商", 决策影响:"影响系统稳定性"},
+    scenes:[
+      {who:"厂商", text:"我们下个月停用旧版模型 API，你们得迁到新版。新版 prompt 兼容性有变化，准确率可能波动。"}
+    ],
+    options:[
+      {t:"到了再说，先不管，等停了再紧急迁移。", score:0, trust:-15, tag:"bad",
+       fb:"灾难性做法。",
+       why:"紧急迁移必然出问题，业务中断客户直接流失。FDE 的核心价值之一就是'大模型升级要主动评估对业务影响'。"},
+      {t:"立即评估新版对现有 prompt 和业务场景的影响，做迁移方案，跟客户沟通预期波动，灰度切换。", score:20, trust:+10, tag:"good",
+       fb:"专业 FDE 主动管理不确定性。",
+       why:"主动评估+灰度切换+预期管理，把不确定性变成可控风险。客户会觉得你靠谱。"},
+      {t:"拒绝升级，自己搭一套开源模型顶上。", score:6, trust:-5, tag:"mid",
+       fb:"过度工程。",
+       why:"搭开源模型成本高、效果可能更差、还要自己运维。除非有强合规要求，否则不划算。"}
+    ]
+  },
+  {
+    no:"STAGE 08", title:"项目结项要撤", loc:"项目结项会 · 内部讨论",
+    meta:{阶段:"结项", 角色:"项目经理", 决策影响:"影响长期商业模式"},
+    scenes:[
+      {who:"项目经理", text:"项目验收了，客户也满意了，团队下周撤回总部，你也跟着撤吧，新项目还等着你。"}
+    ],
+    options:[
+      {t:"同意，项目 close 就该撤，留下来浪费人力成本。", score:0, trust:-20, tag:"bad",
+       fb:"FDE 撤了，智能体又开始变笨。",
+       why:"没人追踪指标、没人评估大模型升级影响，3 个月后客户投诉，口碑崩盘。"},
+      {t:"改为远程追踪模式，保留轻量介入：定期看指标、大模型升级时评估影响、计费模式从项目费转维护费/订阅费。", score:20, trust:+15, tag:"good",
+       fb:"持续运维阶段的正确姿势。",
+       why:"计费模式都要变——这是 FDE 不被撤的商业模式保障。从一次性项目费转订阅，是长期价值护城河。"},
+      {t:"继续驻场不撤，时刻守着客户。", score:8, trust:+5, tag:"mid",
+       fb:"过度投入。",
+       why:"FDE 要在'不撤'和'不耗死自己'之间找平衡，远程追踪是答案。驻场成本高，公司不会同意。"}
+    ]
+  },
+  {
+    no:"STAGE 09", title:"客户要砍预算", loc:"续约谈判 · 客户财务会议",
+    meta:{阶段:"续约", 角色:"客户CFO", 决策影响:"影响续约与商业模式"},
+    scenes:[
+      {who:"客户CFO", text:"今年预算紧，你们的维护费能不能砍一半？或者我们就不要维护了，反正系统跑得好好的。"}
+    ],
+    options:[
+      {t:"同意砍一半，先保住续约再说。", score:4, trust:-3, tag:"mid",
+       fb:"短视。",
+       why:"砍一半预算意味着追踪力度减半，智能体衰减没人管，半年后出问题，客户骂你不专业。"},
+      {t:"用数据证明价值：展示追踪发现的问题、避免的损失、持续优化的效果，把维护费重新定义为'价值保障费'。", score:20, trust:+12, tag:"good",
+       fb:"FDE 的商业感体现。",
+       why:"把成本项变成价值项。展示 ROI：降本多少、增效多少、避免多少事故。客户从'要不要砍'变成'不能砍'。"},
+      {t:"不同意砍，威胁停服。", score:0, trust:-15, tag:"bad",
+       fb:"僵局。",
+       why:"威胁停服只会让客户觉得你在敲诈。FDE 要做的是价值翻译，不是博弈对抗。"}
+    ]
+  },
+  {
+    no:"STAGE 10", title:"组织转型建议", loc:"客户CEO办公室 · 战略复盘",
+    meta:{阶段:"战略", 角色:"客户CEO", 决策影响:"影响客户组织转型"},
+    scenes:[
+      {who:"客户CEO", text:"这个项目做得不错。你觉得我们公司要全面 AI 化，下一步该怎么搞？要不要招一批 FDE？"}
+    ],
+    options:[
+      {t:"建议大举招聘 FDE，组建 FDE 团队。", score:6, trust:-2, tag:"mid",
+       fb:"方向对但顺序错。",
+       why:"'光培训 FDE 解决不了问题。'前线扔出去打仗的兵，如果没有后勤跟上就是去送死。先建体系再招兵。"},
+      {t:"建议先做最小可行案例撬动 CEO 认知，再让 CEO 投入资源建体系（数据治理、AI 中台、前线三人组），最后规模化 FDE。", score:20, trust:+15, tag:"good",
+       fb:"破局之法。",
+       why:"有效条件：组织成熟度≥60% + 前线团队三人到位 + FDE 具备降维能力。条件不满足时先做 6-12 个月组织前提建设。"},
+      {t:"建议从 CTO 那边推动组织变革。", score:2, trust:-8, tag:"bad",
+       fb:"找错人。",
+       why:"'真正的 AI 转型只有 CEO 能搞定。'CTO 只会保护自己那块利益，推不动业务方变革。这条建议会让 CEO 觉得你不懂组织。"}
+    ]
+  }
+];
+
+let curStage = 0, totalScore = 0, trust = 70;
+const TRUST_MAX = 100;
+
+function renderStage(i){
+  const s = stages[i];
+  const opts = s.options.map((o,idx)=>`
+    <div class="option" data-idx="${idx}">
+      <div class="dot">${String.fromCharCode(65+idx)}</div>
+      <div>
+        <div>${o.t}</div>
+        <div class="cost">积分 +${o.score} · 信任 ${o.trust>=0?'+':''}${o.trust}</div>
+      </div>
+    </div>`).join('');
+  const scenes = s.scenes.map(sc=>`<div class="scene"><span class="who">${sc.who}：</span>${sc.text}</div>`).join('');
+  const meta = Object.entries(s.meta).map(([k,v])=>`<span><b>${k}：</b>${v}</span>`).join('');
+  return `
+    <div class="stage">
+      <div class="stage-head">
+        <div class="stage-no">${s.no}</div>
+        <h3>${s.title}</h3>
+        <div class="stage-loc">📍 ${s.loc}</div>
+      </div>
+      <div class="stage-body">
+        <div class="stage-meta">${meta}</div>
+        ${scenes}
+        <div class="options" id="optsBox">${opts}</div>
+        <div class="feedback" id="fb"></div>
+        <button class="next-btn" id="nextBtn">${i<stages.length-1?'下一关 →':'查看通关认证'}</button>
+      </div>
+    </div>`;
+}
+
+function loadStage(){
+  document.getElementById('stageContainer').innerHTML = renderStage(curStage);
+  document.getElementById('curStage').textContent = `${curStage+1}/${stages.length}`;
+  document.querySelectorAll('.option').forEach(el=>el.addEventListener('click', ()=>choose(el)));
+  document.getElementById('nextBtn').addEventListener('click', next);
+}
+
+function updateTrust(){
+  trust = Math.max(0, Math.min(TRUST_MAX, trust));
+  document.getElementById('trustVal').textContent = trust;
+  document.getElementById('trustFill').style.width = `${trust}%`;
+}
+
+function choose(el){
+  const idx = +el.dataset.idx;
+  const o = stages[curStage].options[idx];
+  document.querySelectorAll('.option').forEach(e=>{e.classList.add('locked');e.classList.remove('selected')});
+  el.classList.add('selected');
+  if(o.tag==='good') el.classList.add('correct');
+  else if(o.tag==='bad') el.classList.add('wrong');
+
+  totalScore += o.score;
+  trust += o.trust;
+  document.getElementById('totalScore').textContent = totalScore;
+  updateTrust();
+
+  const fb = document.getElementById('fb');
+  fb.className = `feedback show ${o.tag==='good'?'good':o.tag==='mid'?'mid':'bad'}`;
+  fb.innerHTML = `<b>${o.fb}</b><div class="row"><span>积分 +${o.score}</span><span>信任 ${o.trust>=0?'+':''}${o.trust}</span></div><div class="why">💡 ${o.why}</div>`;
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function next(){
+  curStage++;
+  if(curStage >= stages.length){showResult();return}
+  loadStage();
+  window.scrollTo({top:document.getElementById('game').offsetTop-80, behavior:'smooth'});
+}
+
+function showResult(){
+  document.getElementById('stageContainer').innerHTML = '';
+  const max = stages.length * 20;
+  const pct = totalScore/max;
+  const trustPct = trust/TRUST_MAX;
+  const combined = (pct + trustPct)/2;
+  let rank, desc, emoji;
+  if(combined>=0.85){rank="S 级 FDE"; emoji="🚀"; desc="你已具备 FDE 的降维能力——能在现场同时理解业务、系统模型、工具边界和交互边界。客户信任度也维持住了，可以争取公司内部 AI 创新项目，成为你部门的'首席 AI 落地官'。"}
+  else if(combined>=0.65){rank="A 级 候补 FDE"; emoji="🛣️"; desc="方向对了，但有些关键决策还不够老练。重点补'耐心'和'说不'的能力——这两个是新手最容易翻车的地方。客户信任度有波动，说明决策还不够稳。"}
+  else if(combined>=0.45){rank="B 级 见习 FDE"; emoji="🗺️"; desc="你对 FDE 的认知还停留在'技术活'层面。建议重读教程 L2 能力拆解和 L3 实战方法论，尤其注意 demo 阶段和运维阶段。"}
+  else{rank="C 级 路人 FDE"; emoji="🚸"; desc="你的直觉里还都是 demo 思维和甩锅思维。FDE 不是你的菜，但别灰心——纯技术路线也值得深耕，不是所有人都该转。"}
+  const r = document.getElementById('gameResult');
+  r.classList.add('show');
+  document.getElementById('finalRank').innerHTML = `${emoji}<br>${rank}`;
+  document.getElementById('finalDesc').textContent = desc;
+  document.getElementById('breakdown').innerHTML = `
+    <div class="bd"><div class="v">${totalScore}/${max}</div><div class="l">决策积分</div></div>
+    <div class="bd"><div class="v">${trust}/${TRUST_MAX}</div><div class="l">客户信任度</div></div>
+    <div class="bd"><div class="v">${Math.round(combined*100)}%</div><div class="l">综合评级</div></div>
+  `;
+  r.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function restartGame(){
+  curStage=0; totalScore=0; trust=70;
+  document.getElementById('gameResult').classList.remove('show');
+  document.getElementById('totalScore').textContent='0';
+  updateTrust();
+  loadStage();
+}
+
+updateTrust();
+loadStage();
+
+/* ============ 测试：30 题 × 六维 ============ */
+const quizData = [
+  // 沟通力 com (5题)
+  {q:"客户说'我们要个智能客服'，你的第一反应是：", dim:"com", opts:["问技术选型用什么模型","问业务里'客服'到底解决什么问题、现有流程","问报价多少能接","问多快能交付"]},
+  {q:"会议上技术、业务、安全三方吵起来，你会：", dim:"com", opts:["等吵完再说","站技术方据理力争","把三方真实诉求翻译给彼此听，找共识","记录纪要上报领导"]},
+  {q:"需求只有一句话，你的动作是：", dim:"com", opts:["按字面意思做一版","反问 5 个为什么挖真实问题","让产品经理去澄清","存 TODO 等需求明确"]},
+  {q:"你向业务老板汇报 AI 项目，会：", dim:"com", opts:["堆技术指标：准确率、F1","讲业务故事：降本多少、谁受益、怎么用","念 PPT","让销售去讲"]},
+  {q:"你更愿意花周末：", dim:"com", opts:["刷技术文章看源码","跟不同行业的人聊天理解业务","参加行业大会认识人","陪家人不想工作"]},
+
+  // 抽象力 abs (5题)
+  {q:"看一段业务流程图，脑子里第一件事是：", dim:"abs", opts:["哪个环节可以自动化","这流程图用什么工具画","哪段代码怎么实现","哪些是隐性人工判断 AI 替不掉"]},
+  {q:"客户说'老虎狮子'，你的第一反应：", dim:"abs", opts:["猫科动物的代码分类","业务场景的产品抽象","数据库怎么建表","报价多少"]},
+  {q:"多个客户提了看似不同的需求，你会：", dim:"abs", opts:["逐个实现","找共性做成可复用模块","都说做不了","让销售分别报价"]},
+  {q:"看一段代码，你更关注：", dim:"abs", opts:["语法和性能","业务逻辑是否对","能不能 refactor","有没有 bug"]},
+  {q:"面对一个新行业客户，你会先：", dim:"abs", opts:["研究他们的技术栈","理解他们的商业模式和业务流程","评估他们的预算","看他们用什么数据库"]},
+
+  // 方案力 arch (5题)
+  {q:"智能体上线三个月准确率下降，你的判断是：", dim:"arch", opts:["换更大模型","业务场景漂移，重新梳理上下文","调参就行","客户用错了"]},
+  {q:"设计一个 AI 系统，你会先定：", dim:"arch", opts:["用什么模型","数据流和权限边界","前端长啥样","报价多少"]},
+  {q:"项目验收后客户满意，团队要撤，你的想法是：", dim:"arch", opts:["终于结束了下一个","留远程追踪机制，智能体会衰减","继续驻场不走","写交接文档就撤"]},
+  {q:"面对一个复杂业务场景，你的拆解方式是：", dim:"arch", opts:["直接写代码","拆成架构、模块、接口、数据流、上线步骤","问产品经理要 PRD","让架构师来拆"]},
+  {q:"系统挂了，你的第一反应是：", dim:"arch", opts:["重启大法好","看监控定位问题","甩锅给运维","等客户反馈再说"]},
+
+  // 承担力 own (5题)
+  {q:"客户要的功能你明知三个月做不完，但销售已经吹出去了，你：", dim:"own", opts:["硬着头皮接加班","直接告诉客户做不完","拆 MVP，明确告知能做不能做，让客户决策","甩锅给销售"]},
+  {q:"团队有人甩锅给你，你：", dim:"own", opts:["默默背下避免冲突","据理力争甩回去","承担属于我的部分，同时明确边界和责任","找领导评理"]},
+  {q:"关于'转型 FDE'，你的真实想法是：", dim:"own", opts:["想转但怕背锅","已经在转主动找机会练手","不想转更适合纯技术","看公司给不给机会"]},
+  {q:"下面哪种工作状态更让你兴奋：", dim:"own", opts:["一个人安静写代码到深夜","站在客户面前两小时给出 demo","跟业务方一起把需求画清楚","写方案 PPT"]},
+  {q:"项目出了线上事故，你的第一动作是：", dim:"own", opts:["先排查是谁的锅","立即止损并通知客户","装作不知道","等领导问再说"]},
+
+  // 商业感 biz (5题)
+  {q:"老板问你'这个 AI 项目能赚多少钱'，你：", dim:"biz", opts:["汇报技术指标","算 ROI：降本多少、增效多少、新增收入多少","说我也不知道","让销售去报价"]},
+  {q:"客户说'我跟别人不一样'，你的内心 OS：", dim:"biz", opts:["又来一个作妖的","OK，让我听听哪里不一样，识别真假特殊","直接按标准来不惯着","客户说啥就是啥"]},
+  {q:"你的 AI 工具月消费大概是：", dim:"biz", opts:["几乎不用","几十块尝鲜","500 块以上深度用在工作流","公司报销的才用"]},
+  {q:"客户要砍预算，你会：", dim:"biz", opts:["同意砍保住续约","用数据证明价值，重新定义为价值保障费","威胁停服","降价但服务缩水"]},
+  {q:"下面哪句话最戳你：", dim:"biz", opts:["代码改变世界","撸代码再快有 AI 快吗","构造东西越来越便宜时 Go-to-market 才值钱","稳定系统是工程师尊严"]},
+
+  // 学习力 learn (5题)
+  {q:"新出一个 AI 模型/工具，你会：", dim:"learn", opts:["等别人验证再用","立刻上手试，评估能不能用到工作流","看看新闻就行","让团队里别人去研究"]},
+  {q:"面对一个完全陌生的业务领域，你会：", dim:"learn", opts:["硬着头皮上，边做边学","先花时间跟一线泡在一起理解","让产品经理去搞懂","建议客户换个我们熟悉的领域"]},
+  {q:"你的学习方式更接近：", dim:"learn", opts:["看官方文档和源码","动手做项目踩坑","跟人聊天请教","等培训"]},
+  {q:"一个 AI 项目失败了，你会：", dim:"learn", opts:["怪客户数据烂","复盘根因写案例","怪模型不行","忘了它开始下一个"]},
+  {q:"关于'AI 会不会取代你'，你的态度是：", dim:"learn", opts:["不会，我有经验","会用 AI 的人取代不用 AI 的人","迟早的事","无所谓"]}
+];
+
+const dimNames = {com:"沟通力", abs:"抽象力", arch:"方案力", own:"承担力", biz:"商业感", learn:"学习力"};
+const dimFull = {com:"Communication", abs:"Abstraction", arch:"Architecture", own:"Ownership", biz:"Business", learn:"Learning"};
+
+function renderQuiz(){
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = quizData.map((q,i)=>{
+    const letters=['A','B','C','D'];
+    const opts = q.opts.map((o,j)=>`
+      <label>
+        <input type="radio" name="q${i}" value="${j}" data-q="${i}">
+        <span class="radio"></span>
+        <span class="txt">${letters[j]}. ${o}</span>
+      </label>`).join('');
+    return `<div class="quiz-q">
+      <div class="q-no">Q${String(i+1).padStart(2,'0')} · ${dimNames[q.dim]} ${dimFull[q.dim]}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="likert">${opts}</div>
+    </div>`;
+  }).join('');
+
+  container.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const done = new Set();
+      container.querySelectorAll('input:checked').forEach(c=>done.add(+c.dataset.q));
+      document.getElementById('quizSubmit').disabled = done.size < quizData.length;
+    });
+  });
+}
+
+// 评分：默认 A=1,B=5,C=3,D=0；个别题微调
+function getScore(qi, optIdx){
+  // Q4(索引3) 汇报题: B(算ROI)=5, C(讲故事)=4
+  if(qi===3) return [1,5,4,0][optIdx];
+  // Q13(索引12) 系统挂了: B(看监控)=5, A(重启)=2
+  if(qi===12) return [2,5,0,1][optIdx];
+  // Q19(索引18) 事故: B(止损通知)=5, A(查锅)=1
+  if(qi===18) return [1,5,0,0][optIdx];
+  // Q24(索引23) 砍预算: B(证明价值)=5
+  if(qi===23) return [2,5,0,1][optIdx];
+  return [1,5,3,0][optIdx];
+}
+
+document.getElementById('quizSubmit').addEventListener('click', ()=>{
+  const dims = {com:0, abs:0, arch:0, own:0, biz:0, learn:0};
+  quizData.forEach((q,i)=>{
+    const checked = document.querySelector(`input[name="q${i}"]:checked`);
+    if(checked) dims[q.dim] += getScore(i, +checked.value);
+  });
+  showQuizResult(dims);
+});
+
+function drawRadar(dims){
+  const canvas = document.getElementById('radarCanvas');
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width/2, cy = canvas.height/2;
+  const radius = 120;
+  const keys = Object.keys(dims);
+  const n = keys.length;
+  const max = 25;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // 背景网格
+  for(let r=1;r<=5;r++){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const ang = -Math.PI/2 + i*2*Math.PI/n;
+      const x = cx + Math.cos(ang)*radius*r/5;
+      const y = cy + Math.sin(ang)*radius*r/5;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(46,93,69,0.2)';
+    ctx.stroke();
+  }
+  // 轴线
+  for(let i=0;i<n;i++){
+    const ang = -Math.PI/2 + i*2*Math.PI/n;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(ang)*radius, cy+Math.sin(ang)*radius);
+    ctx.strokeStyle = 'rgba(46,93,69,0.3)';
+    ctx.stroke();
+  }
+  // 数据
+  ctx.beginPath();
+  for(let i=0;i<n;i++){
+    const ang = -Math.PI/2 + i*2*Math.PI/n;
+    const v = dims[keys[i]]/max;
+    const x = cx + Math.cos(ang)*radius*v;
+    const y = cy + Math.sin(ang)*radius*v;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(200,118,47,0.3)';
+  ctx.fill();
+  ctx.strokeStyle = '#c8762f';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // 数据点
+  for(let i=0;i<n;i++){
+    const ang = -Math.PI/2 + i*2*Math.PI/n;
+    const v = dims[keys[i]]/max;
+    const x = cx + Math.cos(ang)*radius*v;
+    const y = cy + Math.sin(ang)*radius*v;
+    ctx.beginPath();
+    ctx.arc(x,y,4,0,2*Math.PI);
+    ctx.fillStyle = '#c8762f';
+    ctx.fill();
+  }
+  // 标签
+  ctx.fillStyle = '#1b3a2f';
+  ctx.font = 'bold 13px PingFang SC';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for(let i=0;i<n;i++){
+    const ang = -Math.PI/2 + i*2*Math.PI/n;
+    const lx = cx + Math.cos(ang)*(radius+22);
+    const ly = cy + Math.sin(ang)*(radius+22);
+    ctx.fillText(dimNames[keys[i]], lx, ly);
+    ctx.fillStyle = '#888';
+    ctx.font = '10px PingFang SC';
+    ctx.fillText(dims[keys[i]]+'/'+max, lx, ly+14);
+    ctx.fillStyle = '#1b3a2f';
+    ctx.font = 'bold 13px PingFang SC';
+  }
+}
+
+function showQuizResult(dims){
+  const max = 25;
+  const total = Object.values(dims).reduce((a,b)=>a+b,0);
+  const totalMax = 150;
+  const sorted = Object.entries(dims).sort((a,b)=>b[1]-a[1]);
+  const strongest = sorted[0];
+  const weakest = sorted[sorted.length-1];
+  const avg = total/totalMax;
+
+  let emoji, title, sub, advice, summary;
+  if(avg >= 0.78){
+    emoji="🚀"; title="天生 FDE 苗子";
+    sub=`综合 ${total}/${totalMax} · 最强：${dimNames[strongest[0]]} · 最弱：${dimNames[weakest[0]]}`;
+    advice=`<p>你是 FDE 的天选之人。建议路径：</p><ul>
+      <li><b>别离职</b>，争取公司内部 AI 创新项目练手，成为你部门的"首席 AI 落地官"。</li>
+      <li>把 AI 能力、业务能力、Go-to-market 能力三条线同时推进。</li>
+      <li>2026-27 是黄金窗口，再过一两年复合人才窗口会收窄。</li>
+      <li>对标角色：Palantir FDE、Anthropic 解决方案工程师、OpenAI 企业落地岗。</li></ul>`;
+    summary="你具备 FDE 的降维能力——能在现场同时理解业务、系统模型、工具边界和交互边界。";
+  } else if(avg >= 0.6){
+    emoji="🛣️"; title="FDE 候补选手";
+    sub=`综合 ${total}/${totalMax} · 最强：${dimNames[strongest[0]]} · 最弱：${dimNames[weakest[0]]}`;
+    advice=`<p>方向对了，但还有短板。重点补：</p><ul>
+      <li>最弱维度 <b>${dimNames[weakest[0]]}</b> 是你的瓶颈，针对性补强。</li>
+      <li>先去跟业务人员混在一起，理解他们的真实工作流。</li>
+      <li>每月 token 消费拉到 500 块以上，把 AI 当工作流用而不是尝鲜。</li>
+      <li>建议先转产品经理或解决方案架构师过渡 1-2 年再转 FDE。</li></ul>`;
+    summary="你离 FDE 还差一口气，差的是底层能力重构，不是新技能学习。";
+  } else if(avg >= 0.42){
+    emoji="🗺️"; title="见习 FDE / 转型中";
+    sub=`综合 ${total}/${totalMax} · 最强：${dimNames[strongest[0]]} · 最弱：${dimNames[weakest[0]]}`;
+    advice=`<p>你的认知还停留在技术视角。建议：</p><ul>
+      <li>不要急着转 FDE，先回教程 L2 重读"四项核心能力"。</li>
+      <li>反直觉观点：产品经理和测试比研发更适合转 FDE。你可以考虑先转产品。</li>
+      <li>如果只想做技术，深耕架构或 AI 算法也是好出路，不是所有人都该转 FDE。</li>
+      <li>对标角色：高级研发、技术专家、架构师。</li></ul>`;
+    summary="你的直觉里还都是点状思维，FDE 要的是面状和系统思维。";
+  } else if(avg >= 0.28){
+    emoji="🔧"; title="纯技术深耕型";
+    sub=`综合 ${total}/${totalMax} · 最强：${dimNames[strongest[0]]} · 最弱：${dimNames[weakest[0]]}`;
+    advice=`<p>FDE 不是你的菜，但你的技术深度有价值。建议：</p><ul>
+      <li>深耕 AI 算法、模型工程、Infra 方向，这些 AI 时代仍然稀缺。</li>
+      <li>如果想拓展边界，往 AI 算法工程师、模型工程师、SRE 方向走。</li>
+      <li>FDE 最终目标是"岗位消融"，不必把自己硬塞进这个标签。</li>
+      <li>对标角色：AI 算法工程师、模型工程师、Infra 工程师。</li></ul>`;
+    summary="你的天赋在确定性强的环境里发光，FDE 这种高度不确定的现场活不适合你。";
+  } else {
+    emoji="🚸"; title="需要重新定位";
+    sub=`综合 ${total}/${totalMax} · 最强：${dimNames[strongest[0]]} · 最弱：${dimNames[weakest[0]]}`;
+    advice=`<p>分数偏低，可能的原因：</p><ul>
+      <li>你还在用学生思维/打工思维做题，没有真实工作场景代入。</li>
+      <li>你的工作离 AI 落地太远，先补 AI 基础认知再考虑转型。</li>
+      <li>建议先把每月 AI 工具消费拉到 200+，把 AI 当日常工具用 3 个月再来测。</li>
+      <li>对标角色：初级研发、测试、运维——先在当前岗位站稳。</li></ul>`;
+    summary="不是你不优秀，是你和 FDE 的画像暂时不匹配。先补基础再考虑转型。";
+  }
+
+  document.getElementById('rEmoji').textContent = emoji;
+  document.getElementById('rTitle').textContent = title;
+  document.getElementById('rSub').textContent = sub;
+  document.getElementById('rAdvice').innerHTML = advice;
+  document.getElementById('rSummary').textContent = summary;
+
+  const bars = Object.entries(dims).map(([k,v])=>{
+    const pct = Math.round(v/max*100);
+    return `<div class="dim-bar">
+      <div class="name"><b>${dimNames[k]} ${dimFull[k]}</b><span>${v}/${max}</span></div>
+      <div class="track"><div class="bar" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('dimBars').innerHTML = bars;
+
+  drawRadar(dims);
+
+  const card = document.getElementById('resultCard');
+  card.classList.add('show');
+  card.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+renderQuiz();
+</script>
+
+</body>
+</html>
